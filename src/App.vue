@@ -9,12 +9,19 @@
       {{ brand }}
     </label>
     </div>
-    <p class="result-count">Remaining Shoes: {{ filteredProducts.length }}</p>
+    <p class="result-count">Remaining Shoes: {{ filteredProducts ? filteredProducts.length:0 }}</p>
     <div class="sort-dropdown">
       <label for="sort">Sort By Price:</label>
-      <select id="sort" v-model="sortOrder">
+      <select id="sort" v-model="sortPriceOrder">
         <option value="asc">Low to High</option>
         <option value="desc">High to Low</option>
+      </select>
+    </div>
+    <div class="sort-dropdown">
+      <label for="sortRelevance">Sort By Relevance:</label>
+      <select id="sortRelevance" v-model="sortRelevanceOrder">
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
       </select>
     </div>
     <div class="product-grid">
@@ -43,24 +50,35 @@ export default {
       showAvailable: true,
       selectedBrands: [],
       brands: [...new Set(products.map(product => product.brand))], 
-      sortOrder: 'asc',
+      sortPriceOrder: 'asc',
+      sortRelevanceOrder: 'asc'
     };
+
   },
   computed: {
     filteredProducts() {
       let filtered = this.products.filter(
-          (product) => 
-            product.isAvailable && (this.selectedBrands.length === 0 || 
-            this.selectedBrands.includes(product.brand))
-        );
+          (product) => {
+            if (this.showAvailable) { 
+              return product.isAvailable && (this.selectedBrands.length === 0) ||
+              this.selectedBrands.includes(product.brand)
+            } else {
+              return this.selectedBrands.length === 0 || this.selectedBrands.includes(product.brand);
+            }
+          });
 
-        if (this.sortOrder === 'asc') {
+        if (this.sortPriceOrder === 'asc') {
           return filtered.sort((a, b) => a.price - b.price);
-        } else {
-          return filtered.sort((a, b) => b.price - a.price)
+        } else if (this.sortPriceOrder === 'desc') {
+          return filtered.sort((a, b) => b.price - a.price); 
+        } else if (this.sortPriceOrder === 'relevance') {
+          const availableProducts = filtered.filter((product) => product.isAvailable);
+          const unavailableProducts = filtered.filter((product) => !product.isAvailable);
+
+          return availableProducts.concat(unavailableProducts).sort((a, b) => a.rank - b.rank);
         }
-      }
-    }
+      },
+    },
   };
 
 </script>
