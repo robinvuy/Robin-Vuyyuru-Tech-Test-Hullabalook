@@ -1,8 +1,11 @@
 <template>
   <div class="app">
+    <label> 
+      <input type="checkbox" v-model="showAvailable" /> Show Only Available Products
+    </label>
     <div class="product-grid">
       <ProductGridItem
-        v-for="product in products"
+        v-for="product in filteredProducts"
         :key="product.name"
         :product="product"
       />
@@ -26,6 +29,15 @@ export default {
       showAvailable: true
     };
   },
+  computed: {
+    filteredProducts() {
+      if (this.showAvailable) {
+        return this.products.filter(product => product.isAvailable);
+      } else {
+        return this.products
+      }
+    }
+  }
 };
 </script>
 
