@@ -9,6 +9,7 @@
       {{ brand }}
     </label>
     </div>
+    <p class="result-count">Remaining Shoes: {{ filteredProducts.length }}</p>
     <div class="product-grid">
       <ProductGridItem
         v-for="product in filteredProducts"
