@@ -10,9 +10,16 @@
     </label>
     </div>
     <p class="result-count">Remaining Shoes: {{ filteredProducts.length }}</p>
+    <div class="sort-dropdown">
+      <label for="sort">Sort By Price:</label>
+      <select id="sort" v-model="sortOrder">
+        <option value="asc">Low to High</option>
+        <option value="desc">High to Low</option>
+      </select>
+    </div>
     <div class="product-grid">
       <ProductGridItem
-        v-for="product in filteredProducts"
+        v-for="product in filteredProducts" 
         :key="product.name"
         :product="product"
       />
@@ -36,21 +43,26 @@ export default {
       showAvailable: true,
       selectedBrands: [],
       brands: [...new Set(products.map(product => product.brand))], 
+      sortOrder: 'asc',
     };
   },
   computed: {
     filteredProducts() {
-      if (this.showAvailable) {
-        return this.products.filter(
+      let filtered = this.products.filter(
           (product) => 
-            product.isAvailable && (this.selectedBrands.length === 0 || this.selectedBrands.includes(product.brand))
+            product.isAvailable && (this.selectedBrands.length === 0 || 
+            this.selectedBrands.includes(product.brand))
         );
-      } else {
-        return this.products.filter((product) => this.selectedBrands.length === 0 || this.selectedBrands.includes(product.brand));
+
+        if (this.sortOrder === 'asc') {
+          return filtered.sort((a, b) => a.price - b.price);
+        } else {
+          return filtered.sort((a, b) => b.price - a.price)
+        }
       }
     }
-  }
-};
+  };
+
 </script>
 
 <style>

@@ -1,7 +1,8 @@
 <template>
   <div class="product-grid-item">
     <img class="product-image" :src="product.image" />
-    <p class="product-name">{{ product.name }}</p>
+    <p class="product-name">Name: {{ product.name }}</p>
+    <p class="product-price">Price: £{{ product.price.toFixed(2) }}</p>
   </div>
 </template>
 
