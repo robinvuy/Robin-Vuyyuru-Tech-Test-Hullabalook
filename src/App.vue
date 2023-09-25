@@ -3,6 +3,12 @@
     <label> 
       <input type="checkbox" v-model="showAvailable" /> Show Only Available Products
     </label>
+    <div class="brand-filters">
+      <label v-for="brand in brands" :key="brand">
+        <input type="checkbox" v-model="selectedBrands" :value="brand">
+      {{ brand }}
+    </label>
+    </div>
     <div class="product-grid">
       <ProductGridItem
         v-for="product in filteredProducts"
@@ -26,15 +32,20 @@ export default {
   data() {
     return {
       products,
-      showAvailable: true
+      showAvailable: true,
+      selectedBrands: [],
+      brands: [...new Set(products.map(product => product.brand))], 
     };
   },
   computed: {
     filteredProducts() {
       if (this.showAvailable) {
-        return this.products.filter(product => product.isAvailable);
+        return this.products.filter(
+          (product) => 
+            product.isAvailable && (this.selectedBrands.length === 0 || this.selectedBrands.includes(product.brand))
+        );
       } else {
-        return this.products
+        return this.products.filter((product) => this.selectedBrands.length === 0 || this.selectedBrands.includes(product.brand));
       }
     }
   }
